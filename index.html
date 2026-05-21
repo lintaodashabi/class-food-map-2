@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>舌尖上的星辰班 - 班级美食地图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF8C42;
+            --secondary: #FFD23F;
+            --accent: #EE6C4D;
+            --blue: #3D5A80;
+            --bg: #FFF8F0;
+            --text: #2D3436;
+            --text-light: #636E72;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.95);
+            font-weight: 300;
+        }
+
+        .header .decorations {
+            margin-top: 20px;
+            font-size: 2rem;
+        }
+
+        .header .decorations span {
+            margin: 0 10px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .header .decorations span:nth-child(2) { animation-delay: 0.1s; }
+        .header .decorations span:nth-child(3) { animation-delay: 0.2s; }
+        .header .decorations span:nth-child(4) { animation-delay: 0.3s; }
+        .header .decorations span:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .food-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .food-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .food-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .food-card .card-image {
+            width: 100%;
+            aspect-ratio: 16/12;
+            object-fit: cover;
+            display: block;
+        }
+
+        .food-card .card-content {
+            padding: 20px;
+        }
+
+        .food-card .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .food-card .card-title {
+            font-size: 1.3rem;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .food-card .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .food-card.highlight {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        }
+
+        .food-card.highlight .card-title,
+        .food-card.highlight .card-desc {
+            color: white;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, var(--blue) 0%, #2C3E50 100%);
+            padding: 50px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .footer .slogan {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .footer .class-info {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .footer .footer-decorations {
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+
+        .footer .footer-decorations span {
+            margin: 0 8px;
+        }
+
+        .copyright {
+            background: #1a252f;
+            padding: 15px;
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>舌尖上的星辰班</h1>
+            <p class="subtitle">味蕾之旅，家的味道</p>
+            <div class="decorations">
+                <span>🍖</span>
+                <span>🍜</span>
+                <span>🍰</span>
+                <span>🍵</span>
+                <span>🍹</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="food-grid">
+            <article class="food-card">
+                <img class="card-image" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&h=450&fit=crop" alt="妈妈的红烧肉 - 五花肉肥而不腻，酱香浓郁">
+                <div class="card-content">
+                    <div class="card-icon">🥩</div>
+                    <h2 class="card-title">妈妈的红烧肉</h2>
+                    <p class="card-desc">班级聚会的压轴大菜，每次上桌都被一抢而空。五花肉肥而不腻，入口即化，酱香浓郁让人回味无穷。妈妈亲手烹制，满满都是家的味道。</p>
+                </div>
+            </article>
+
+            <article class="food-card">
+                <img class="card-image" src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&h=450&fit=crop" alt="麻辣香锅 - 冬日必备，辣得过瘾">
+                <div class="card-content">
+                    <div class="card-icon">🌶️</div>
+                    <h2 class="card-title">麻辣香锅</h2>
+                    <p class="card-desc">冬日必备的暖身美食，辣得过瘾又开胃。食材自由搭配，荤素任选，是全班最受欢迎的聚餐选择。</p>
+                </div>
+            </article>
+
+            <article class="food-card">
+                <img class="card-image" src="https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=600&h=450&fit=crop" alt="手包饺子 - 冬至必备活动">
+                <div class="card-content">
+                    <div class="card-icon">🥟</div>
+                    <h2 class="card-title">手包饺子</h2>
+                    <p class="card-desc">冬至必备活动，承载各地风俗习惯。大家围坐一起包饺子，笑声与面香交织，每个饺子都独一无二。</p>
+                </div>
+            </article>
+
+            <article class="food-card">
+                <img class="card-image" src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&h=450&fit=crop" alt="提拉米苏 - 甜品控的最爱">
+                <div class="card-content">
+                    <div class="card-icon">🍰</div>
+                    <h2 class="card-title">提拉米苏</h2>
+                    <p class="card-desc">甜品控的最爱，咖啡与芝士完美融合。入口即化的绵密口感，让人不自觉闭上眼睛享受这片刻幸福。</p>
+                </div>
+            </article>
+
+            <article class="food-card">
+                <img class="card-image" src="https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=600&h=450&fit=crop" alt="可乐鸡翅 - 色泽红亮，甜而不腻">
+                <div class="card-content">
+                    <div class="card-icon">🍗</div>
+                    <h2 class="card-title">可乐鸡翅</h2>
+                    <p class="card-desc">色泽红亮诱人，甜而不腻让人回味。生日期同学们必点菜品，可乐的特殊甜味让人难忘。</p>
+                </div>
+            </article>
+
+            <article class="food-card">
+                <img class="card-image" src="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&h=450&fit=crop" alt="水果拼盘 - 健康与颜值并存">
+                <div class="card-content">
+                    <div class="card-icon">🍇</div>
+                    <h2 class="card-title">水果拼盘</h2>
+                    <p class="card-desc">健康与颜值并存，五彩水果赏心悦目。春游踏青必备，清爽解腻又营养，大家抢着吃。</p>
+                </div>
+            </article>
+
+            <article class="food-card highlight">
+                <img class="card-image" src="https://images.unsplash.com/photo-1558857563-b371033873b8?w=600&h=450&fit=crop" alt="班级定制奶茶 - 印上班徽的特制奶茶">
+                <div class="card-content">
+                    <div class="card-icon">🧋</div>
+                    <h2 class="card-title">班级定制奶茶</h2>
+                    <p class="card-desc">印上班徽的特制奶茶，全班人手一杯。独一无二的定制设计，彰显星辰班特色，拍照超级出片。</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p class="slogan">星辰班，美食与欢乐同行！</p>
+        <p class="class-info">分享美味，分享快乐，让每一顿饭都成为美好回忆</p>
+        <div class="footer-decorations">
+            <span>🍕</span>
+            <span>🍔</span>
+            <span>🍟</span>
+            <span>🌮</span>
+            <span>🍱</span>
+        </div>
+    </footer>
+
+    <div class="copyright">
+        舌尖上的星辰班 | 班级美食地图 | 2024
+    </div>
+
+    <script>
+        document.querySelectorAll('.food-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.card-title').textContent;
+                console.log('点击了美食:', title);
+            });
+        });
+
+        document.querySelectorAll('.card-image').forEach(img => {
+            img.onerror = function() {
+                this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450"><rect fill="%23f0f0f0" width="600" height="450"/><text x="300" y="225" text-anchor="middle" fill="%23999" font-size="20">图片加载失败</text></svg>';
+            };
+        });
+    </script>
+</body>
+</html>
